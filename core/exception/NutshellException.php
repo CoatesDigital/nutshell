@@ -142,13 +142,6 @@ namespace nutshell\core\exception
 		 */
 		public function getDescription($format='html')
 		{
-			$debug = $this->debug;
-			if($format != 'array')
-			{
-				// don't use var_export. it can cause a recursive error here.
-				$debug = print_r($debug, true); 
-			}
-			
 			// args passed into errant function
 			$args = null;
 			$trace = $this->getTrace();
@@ -170,7 +163,7 @@ namespace nutshell\core\exception
 				'CODE_DESCRIPTION'	=> $this->codeDescription,
 				'FILE'				=> $this->file,
 				'LINE'				=> $this->line,
-				'DEBUG'				=> $debug,
+				'DEBUG'				=> $this->debug,
 				'STACK'				=> "\n".$this->getTraceAsString(),
 				'SERVER'			=> $_SERVER,
 				'POST'				=> $_POST,
@@ -189,6 +182,14 @@ namespace nutshell\core\exception
 			}
 			elseif($format=='html')
 			{
+				// Just to make them take up less lines...
+				$description['SERVER'] = json_encode($description['SERVER']);
+				$description['DEBUG'] = json_encode($description['DEBUG']);
+				$description['ARGS'] = json_encode($description['ARGS']);
+				$description['POST'] = json_encode($description['POST']);
+				$description['GET'] = json_encode($description['GET']);
+				$description['CLASS'] = json_encode($description['CLASS']);
+				
 				$description = '<pre>'.print_r($description, true).'</pre>';
 			}
 			else
