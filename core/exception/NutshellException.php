@@ -329,15 +329,18 @@ namespace nutshell\core\exception
 				// Create the message
 				if($exception instanceof ConfigException)
 				{
+					header('HTTP/1.1 500 Config Exception');
 					die('ERROR: ' . $exception->getCode() .' '. $exception->debug[0]);
 				}
 				elseif($exception->code == E_STRICT)
 				{
 					// The logger fails to load in the case of a "<function name>  should be compatible with that of <parent function name>" error
-					die('ERROR: ' . $exception->getCode() .' '. $exception->debug[0]);
+					// Not dying here, 'cause these can be logged. Will roll through again and cause a recursive error error.
+					$message = 'ERROR: ' . $exception->getCode() .' '. $exception->debug[0];
 				}
 				elseif($exception instanceof LoggerException)
 				{
+					header('HTTP/1.1 500 Logger Exception');
 					die('ERROR: ' . $exception->getCode() .' '. $exception->debug[0]);
 				}
 				elseif($exception instanceof NutshellException)
@@ -360,8 +363,13 @@ namespace nutshell\core\exception
 					header('HTTP/1.1 500 Application Error');
 					echo $message;
 				}
-					
-				self::$blockRecursion = false;
+			}
+			else // Recursion
+			{
+				// Echo the message
+				header('HTTP/1.1 500 Recursive Error Error');
+				$message = 'ERROR: ' . $exception->getCode() .' '. $exception->debug[0];
+				die($message);
 			}
 		}
 		
