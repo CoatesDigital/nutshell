@@ -230,7 +230,7 @@ namespace nutshell\core\exception
 		 * @param  integer $depth how many nodes deep are allowed
 		 * @return array          the new multidimensional array
 		 */
-		private static function slice_array_depth($array, $depth=0)
+		protected static function slice_array_depth($array, $depth=0)
 		{
 			// If it's an object, cast it to an array
 			if(is_object($array)) $array = (array)$array;
